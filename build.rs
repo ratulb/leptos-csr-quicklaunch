@@ -1,5 +1,6 @@
 fn main() {
     use std::process::Command;
+    println!("cargo:rerun-if-changed=build.tmp");
     if cfg!(target_os = "linux") && cfg!(target_arch = "x86_64") {
         // Additional check for Arch Linux
         if std::fs::read_to_string("/etc/os-release")

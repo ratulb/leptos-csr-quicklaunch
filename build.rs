@@ -22,9 +22,6 @@ fn main() {
             "cargo install --no-default-features --force cargo-make"
         );
     }
-    println!("Waiting here");
-    //check_install!("cargo make wasm-bindgen");
-    println!("Done .....");
 }
 #[macro_export]
 macro_rules! check_install {
@@ -53,8 +50,6 @@ macro_rules! check_install {
             ),
             Err(err) => eprintln!("Error {:?} executing [{}]", err, install),
         }
-        // }
-        // }
     }};
 
     ($check:expr, $install: expr) => {{

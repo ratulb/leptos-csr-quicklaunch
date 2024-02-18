@@ -1,0 +1,127 @@
+[env]
+#Wasm output directory
+wasm_output_dir="./dist"
+
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+#Generate wasm from source
+[tasks.generate-wasm]
+command = "cargo"
+args = ["build",  "--target", "wasm32-unknown-unknown", "--release"]
+dependencies = ["install_requirements"]
+
+#Run wasm-bindgen to generate js/ts bindings
+[tasks.wasm-bindgen]
+command = "wasm-bindgen"
+args = ["--target",  "web", "target/wasm32-unknown-unknown/release/${CARGO_MAKE_CRATE_FS_NAME}.wasm", "--out-dir", "${wasm_output_dir}"]
+dependencies = ["generate-wasm"]
+
+#If project name contains '-'s, then replace it with '_'
+[tasks.dump_env]
+script_runner = "@duckscript"
+script = '''
+#WASM_FILE_NAME= get_env CARGO_MAKE_CRATE_FS_NAME
+#set_env WASM_FILE_NAME get_env CARGO_MAKE_CRATE_FS_NAME
+echo The wasm file name is "${CARGO_MAKE_CRATE_FS_NAME}.wasm"
+echo The target directory is "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}"
+echo The triple target directory is "${CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY}"
+'''
+
+[tasks.install_requirements]
+script_runner = "@rust"
+script = '''
+fn main() {
+    use std::process::Command;
+    if cfg!(target_os = "windows") {
+        check_install!(
+            "rustup target list | findstr wasm32-unknown-unknown",
+            "rustup target add wasm32-unknown-unknown"
+        );
+    } else {
+        check_install!(
+            "rustup target list | grep wasm32-unknown-unknown",
+            "rustup target add wasm32-unknown-unknown"
+        );
+    }
+    check_install!("wasm-bindgen --version", "cargo install wasm-bindgen-cli");
+}
+#[macro_export]
+macro_rules! check_install {
+    ($check:expr, $install: expr) => {{
+        let check: &'static str = $check;
+        let install: &'static str = $install;
+        let present = if cfg!(target_os = "windows") {
+            Command::new("cmd").args(["/C", check]).output()
+        } else {
+            Command::new("sh").arg("-c").arg(check).output()
+        };
+
+        let present = match present {
+            Ok(output) if output.stdout.len() > 0 => {
+                println!(
+                    "[{}] Executed with resonse {:?}",
+                    install,
+                    std::str::from_utf8(&output.stdout)
+                );
+                true
+            }
+
+            Ok(output) if !output.status.success() && output.stderr.len() > 0 => {
+                println!(
+                    "[{}] Executed with resonse code {:?} and message {:?} ",
+                    install,
+                    output.status,
+                    std::str::from_utf8(&output.stderr)
+                );
+                false
+            }
+
+            Ok(output) => {
+                println!(
+                    "Install command [{}] execution response {:?}",
+                    install, output
+                );
+                true
+            }
+            Err(err) => {
+                eprintln!("Error {:?} executing [{}]", err, install);
+                false
+            }
+        };
+
+        match present {
+            true => println!("[{}] is present", check),
+            false => {
+                let installed = if cfg!(target_os = "windows") {
+                    Command::new("cmd").args(["/C", install]).output()
+                } else {
+                    Command::new("sh").arg("-c").arg(install).output()
+                };
+                match installed {
+                    Ok(output) if output.stdout.len() > 0 => println!(
+                        "[{}] Executed with resonse {:?}",
+                        install,
+                        std::str::from_utf8(&output.stdout)
+                    ),
+
+                    Ok(output) if !output.status.success() && output.stderr.len() > 0 => println!(
+                        "[{}] Executed with resonse code {:?} and message {:?} ",
+                        install,
+                        output.status,
+                        std::str::from_utf8(&output.stderr)
+                    ),
+                    Ok(output) => eprintln!(
+                        "Install command [{}] execution response {:?}",
+                        install, output
+                    ),
+                    Err(err) => eprintln!("Error {:?} executing [{}]", err, install),
+                }
+            }
+        }
+    }};
+}
+'''
+
+

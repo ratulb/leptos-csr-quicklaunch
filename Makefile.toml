@@ -9,13 +9,15 @@ args = ["clean"]
 #Generate wasm from source
 [tasks.generate-wasm]
 command = "cargo"
-args = ["build",  "--target", "wasm32-unknown-unknown", "--release"]
+#args = ["build",  "--target", "wasm32-unknown-unknown", "--release"]
+args = ["build",  "--target", "wasm32-unknown-unknown"]
 dependencies = ["install_requirements"]
 
 #Run wasm-bindgen to generate js/ts bindings
 [tasks.wasm-bindgen]
 command = "wasm-bindgen"
-args = ["--target",  "web", "target/wasm32-unknown-unknown/release/${CARGO_MAKE_CRATE_FS_NAME}.wasm", "--out-dir", "${wasm_output_dir}"]
+#args = ["--target",  "web", "target/wasm32-unknown-unknown/release/${CARGO_MAKE_CRATE_FS_NAME}.wasm", "--out-dir", "${wasm_output_dir}"]
+args = ["--target",  "web", "target/wasm32-unknown-unknown/debug/${CARGO_MAKE_CRATE_FS_NAME}.wasm", "--out-dir", "${wasm_output_dir}"]
 dependencies = ["generate-wasm"]
 
 #Launch the index.html in the default browser

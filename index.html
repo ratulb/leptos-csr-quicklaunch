@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>{{project_name}}</title>
+  <style>
+    .nice {
+        color: #fff;
+        text-align: center;
+        background-color: #159957;
+        background-image: linear-gradient(120deg, #155799, #159957);
+    }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.6.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="preload" href="/dist/{{crate_name}}_bg.wasm" crossorigin="anonymous" as="fetch" type="application/wasm">
   <link rel="modulepreload" href="/dist/{{crate_name}}.js" crossorigin="anonymous">
 </head>
-<body>
-  <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its
-  contents.</p>
+<body class="nice bg-gray-100 h-screen flex justify-center items-center">
   <script type="module">
    import init from "/dist/{{crate_name}}.js";
    let instance = await init("/dist/{{crate_name}}_bg.wasm");

@@ -1,8 +1,8 @@
 <div align="center">
 
-  <h1><code>wasm-pack-template</code></h1>
+  <h1><code>Webassembly with leptos</code></h1>
 
-  <strong>A template for kick starting a Rust and WebAssembly project using <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</strong>
+  <strong>A template for kick starting a Rust and WebAssembly project using <a href="https://leptos.dev/">Leptos</a>.</strong>
 
   <p>
     <a href="https://travis-ci.org/rustwasm/wasm-pack-template"><img src="https://img.shields.io/travis/rustwasm/wasm-pack-template.svg?style=flat-square" alt="Build Status" /></a>
@@ -37,11 +37,11 @@ templates and usages of `wasm-pack`.
 [Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
 
 ```
-cargo generate --git https://github.com/rustwasm/wasm-pack-template.git --name my-project
+cargo generate --git https://github.com/ratulb/leptos-csr-quicklaunch --name my-project
 cd my-project
 ```
 
-### 🛠️ Build with `wasm-pack build`
+### 🛠️ Build with `cargo build`
 
 ```
 wasm-pack build
